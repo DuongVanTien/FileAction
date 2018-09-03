@@ -5,11 +5,11 @@ import java.io.*;
 public class SearchAndReadInLargeFile {
 
     private static String bashType = "/bin/bash";
-    private static String pathFileDataTest = "/home/duongvantien/Desktop/data_test_2.txt";
+    private static String pathFileDataTest = "/home/duongvantien/Desktop/data_test_3.txt";
 
     // sizeOfRecordInBytes depend of size of one record
     // to get size of one record, we need to getBytes of them. Ex: "Data - 10000000".getBytes().length
-    private static int sizeOfRecordInBytes = 38;
+    private static int sizeOfRecordInBytes = 31;
 
     private static File file;
 
@@ -23,7 +23,7 @@ public class SearchAndReadInLargeFile {
         SearchAndReadInLargeFile rlblnb = new SearchAndReadInLargeFile();
 
         // example a record : Data - 30000997 : 2009-09-22 16:47:08
-        rlblnb.printResult("Data - 31999996 : 2009", "Data - 31999999 : 2009", pathFileDataTest);
+        rlblnb.printResult("40000000 : 2009", "40000100 : 2009", pathFileDataTest);
 
         long stop = System.nanoTime();
         System.out.println("Total time : " + (stop - start) / 1000000 + "ms");
@@ -35,11 +35,12 @@ public class SearchAndReadInLargeFile {
         long fromLine = rlblnb.getLineByPattern(fromPattern, path);
         System.out.println("fromLine : " + fromLine);
 
-        long toLine = rlblnb.getLineByPattern(toPattern, path);
-        System.out.println("toLine : " + toLine);
+//        long toLine = rlblnb.getLineByPattern(toPattern, path);
+//        System.out.println("toLine : " + toLine);
 
         System.out.println("===========================");
-        rlblnb.readData(fromLine, toLine);
+//        rlblnb.readData(fromLine, toLine);
+        rlblnb.readData(fromLine, fromLine + 100);
     }
 
     private long getLineByPattern(String pattern, String path) throws IOException {

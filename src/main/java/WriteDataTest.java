@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 
 public class WriteDataTest {
 
-    static String pathToLogFile = "/home/duongvantien/Desktop/data_test_2.txt";
+    static String pathToLogFile = "/home/duongvantien/Desktop/data_test_3.txt";
 
     public static void main(String[] args) throws Exception {
         WriteDataTest rdf = new WriteDataTest();
@@ -21,8 +21,8 @@ public class WriteDataTest {
         start = System.nanoTime();
         Path path = Paths.get(pathToLogFile);
         try (BufferedWriter writer = Files.newBufferedWriter(path)) {
-            for (int i = 10000000; i < 32000000; ++i) {
-                writer.write("Data - " + i + " : 2009-09-22 16:47:08\n");
+            for (int i = 10000000; i < (10000000+3600*24*30*12); ++i) {
+                writer.write(i + " : 2009-09-22 16:47:08\n");
             }
         }
         stop = System.nanoTime();
