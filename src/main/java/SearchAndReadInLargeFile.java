@@ -5,11 +5,11 @@ import java.io.*;
 public class SearchAndReadInLargeFile {
 
     private static String bashType = "/bin/bash";
-    private static String pathFileDataTest = "/home/duongvantien/Desktop/data_test_3.txt";
+    private static String pathFileDataTest = "/home/duong.van.tien/Desktop/BTC_JPY.csv";
 
     // sizeOfRecordInBytes depend of size of one record
     // to get size of one record, we need to getBytes of them. Ex: "Data - 10000000".getBytes().length
-    private static int sizeOfRecordInBytes = 31;
+    private static int sizeOfRecordInBytes = 58;
 
     private static File file;
 
@@ -21,9 +21,10 @@ public class SearchAndReadInLargeFile {
     public static void main(String[] args) throws IOException {
         long start = System.nanoTime();
         SearchAndReadInLargeFile rlblnb = new SearchAndReadInLargeFile();
+        System.out.println("2018-08-22 14:39:46,728372.0,728375.0,728365.0,728372.0,0\n".getBytes().length);
 
         // example a record : Data - 30000997 : 2009-09-22 16:47:08
-        rlblnb.printResult("40000000 : 2009", "40000100 : 2009", pathFileDataTest);
+        rlblnb.printResult("2018-08-22 14:39:46", "2018-08-22 14:39:48", pathFileDataTest);
 
         long stop = System.nanoTime();
         System.out.println("Total time : " + (stop - start) / 1000000 + "ms");

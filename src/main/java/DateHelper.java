@@ -14,9 +14,9 @@ public class DateHelper {
         dateHelper.getSecondBetweenTwoDate(fromDate, toDate);
     }
 
-    public void getSecondBetweenTwoDate(Date fromDate, Date toDate) {
+    public int getSecondBetweenTwoDate(Date fromDate, Date toDate) {
         long seconds = (toDate.getTime() - fromDate.getTime())/1000;
-        System.out.println("Seconds : " + seconds);
+        return (int) seconds;
     }
 
     public Date parseStringToDate(String strDate, String dateFormat) {

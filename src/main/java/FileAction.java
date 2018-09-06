@@ -3,15 +3,14 @@ package main.java;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.stream.Stream;
 
 public class FileAction {
     private static String bashType = "/bin/bash";
-    private static String pathFileDataTest = "/home/duongvantien/Desktop/data_test_2.txt";
+    private static String pathFileDataTest = "/home/duong.van.tien/Desktop/BTC_JPY.csv";
 
-    // sizeOfRecordInBytes depend of size of one record
-    // to get size of one record, we need to getBytes of them. Ex: "Data - 10000000".getBytes().length
-    private static int sizeOfRecordInBytes = 38;
+    private static int sizeOfRecordInBytes = 58;
 
     private static File file;
 
@@ -24,8 +23,24 @@ public class FileAction {
         long start = System.nanoTime();
         FileAction fileAction = new FileAction();
 
-        int numberLine = fileAction.getNumberLineOfFileByBash(pathFileDataTest);
-        System.out.println(" Result " + fileAction.binarySearch(0, numberLine, "Data - 11111111 : 2009-09-22 16:47:08"));
+        long fileSize = fileAction.getFileSizeByBash(pathFileDataTest);
+        int numberLine = fileAction.getNumberLineByFileSize(sizeOfRecordInBytes, fileSize);
+
+        System.out.println("Number lines : " + numberLine);
+        long s = System.nanoTime();
+        int fromLine = fileAction.binarySearch(0, numberLine, "2018-08-21 11:18:54");
+        System.out.println("time search : " + (System.nanoTime()-s)/1000000);
+
+        System.out.println("From line : " + fromLine);
+
+        DateHelper dateHelper = new DateHelper();
+        Date fromDate = dateHelper.parseStringToDate("2021-08-18 11:18:54", dateHelper.dateFormat);
+        Date toDate = dateHelper.parseStringToDate("2021-08-18 11:19:05", dateHelper.dateFormat);
+        int toLine = fromLine + dateHelper.getSecondBetweenTwoDate(fromDate, toDate);
+
+        System.out.println("To line : " + fromLine);
+
+        fileAction.readData(fromLine, toLine);
 
 
         long stop = System.nanoTime();
@@ -125,6 +140,22 @@ public class FileAction {
         return numberLine;
     }
 
+    private int getNumberLineByFileSize(int sizeOfOneRecord, long fileSize) {
+        return (int) (fileSize/sizeOfOneRecord);
+    }
+
+    private long getFileSizeByBash(String path) throws IOException {
+        Process process = Runtime.getRuntime().exec("ls -l " + path);
+
+        String result = null;
+        long fileSize = 0;
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        while ((result = bufferedReader.readLine()) != null) {
+            fileSize = Long.parseLong(result.split(" ")[4]);
+        }
+        return fileSize;
+    }
+
     private long setStartAtByte(long fromLine) {
         RandomAccessFile rand = null;
 
@@ -152,7 +183,6 @@ public class FileAction {
     }
 
     private void readData(long fromLine, long toLine) {
-        // new position start at
         long startAtByte = setStartAtByte(fromLine);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
@@ -168,16 +198,32 @@ public class FileAction {
         }
     }
 
+    private String getDataByLineNumber(long lineNumber) {
+        long startAtByte = setStartAtByte(lineNumber);
+        String result = null;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            reader.skip(startAtByte);
+            char[] record = new char[sizeOfRecordInBytes];
+            reader.read(record, 0, sizeOfRecordInBytes);
+            result = new String(record);
+        } catch (Exception e) {
+            // do something
+        }
+        return result;
+    }
+
     int binarySearch(int fromLine, int toLine, String key) throws IOException {
         if (fromLine <= toLine) {
             int mid = fromLine + (toLine - fromLine) / 2;
 
-            String lineOfMidle = getContentByLineNumber(mid, pathFileDataTest);
+            // String lineOfMidle = getContentByLineNumber(mid, pathFileDataTest);
+            String lineOfMidle = getDataByLineNumber((int)mid);
 
-            if (lineOfMidle.compareToIgnoreCase(key) == 0)
+            if (lineOfMidle.split(",")[0].compareTo(key) == 0)
                 return mid;
 
-            if (lineOfMidle.compareToIgnoreCase(key) < 0)
+            if (lineOfMidle.compareToIgnoreCase(key) > 0)
                 return binarySearch(fromLine, mid - 1, key);
 
             return binarySearch(mid + 1, toLine, key);
